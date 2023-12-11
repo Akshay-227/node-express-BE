@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import jwt from 'jsonwebtoken'
 
 const addressSchema = new Schema({
   city: { type: String, required: true },
@@ -7,7 +8,7 @@ const addressSchema = new Schema({
   street: { type: String, required: true },
 });
 
-const itemsSchema = new Schema({
+const userSchema = new Schema({
   id: { type: String, required: true },
   gender: { type: String, required: true },
   name: { type: String, required: true },
@@ -16,18 +17,44 @@ const itemsSchema = new Schema({
   age: { type: String, required: true },
   picture: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-});
+},{timeStamps:true});
 
-const Items = mongoose.model('Items', itemsSchema);
+export const User = mongoose.model('User', userSchema);
 
-const paginationSchema = new Schema<IPagination>({
+const paginationSchema = new Schema({
   total: { type: Number, required: true },
   limit: { type: Number, required: true },
   page: { type: Number, required: true },
   sortBy: { type: String, required: true },
   items: [{ type: itemsSchema, required: true }],
-});
+},{timeStamps:true});
 
-const Pagination = mongoose.model('Pagination', paginationSchema);
+userSchema.methods.generateAccessToken=function(){
+  jwt.sign({_id:this._id, 
+    email:this.email,
+    name:this.name,
+    address:this.address,
+    gender:this.gender,
+    age:this.age
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn:process.env.ACCESS_TOKEN_EXPIRY
+    })
+}
 
-export { Items, Pagination };
+userSchema.methods.generateRefreshToken=function(){
+  jwt.sign({_id:this._id, 
+    email:this.email,
+    name:this.name,
+    address:this.address,
+    gender:this.gender,
+    age:this.age
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+    })
+}
+export const Pagination = mongoose.model('Pagination', paginationSchema);
+
