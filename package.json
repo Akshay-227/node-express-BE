@@ -1,0 +1,24 @@
+{
+  "name": "akshay-backend-practice",
+  "version": "1.0.0",
+  "description": "node backend using express and mongoose",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Akshay-227/node-express-BE.git"
+  },
+  "author": "Akshay Ratnakar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Akshay-227/node-express-BE/issues"
+  },
+  "homepage": "https://github.com/Akshay-227/node-express-BE#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3"
+  }
+}
