@@ -2,22 +2,21 @@ import mongoose, { Schema } from 'mongoose';
 import { IAddress, IUser, IPagination } from '../interfaces/interface';
 import jwt from 'jsonwebtoken'
 const addressSchema = new Schema<IAddress>({
-  city: { type: String, required: true },
-  state: { type: String, required: true },
-  country: { type: String, required: true },
-  street: { type: String, required: true },
+  city: { type: String, required: true, trim:true },
+  state: { type: String, required: true , trim:true},
+  country: { type: String, required: true , trim:true},
+  street: { type: String, required: true , trim:true},
 });
 
 const userSchema = new Schema<IUser>(
   {
-    id: { type: String, required: true },
-    gender: { type: String, required: true },
-    name: { type: String, required: true },
+    id: { type: String, required: true, unique:true, trim:true },
+    gender: { type: String, required: true,  trim:true },
+    name: { type: String, required: true , trim:true,index: true},
     address: { type: addressSchema, required: true },
-    email: { type: String, required: true },
-    age: { type: String, required: true },
+    email: { type: String, required: true , trim:true,index: true},
+    age: { type: String, required: true , trim:true},
     picture: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
