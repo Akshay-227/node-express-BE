@@ -66,7 +66,7 @@ docker run -p <HOST_PORT>:<PORT_FROM_ENV> --env-file .env <Image_Name>
 
 #### Register User
 
-```http
+```bash
   POST /api/v1/users/register
 ```
 
@@ -88,7 +88,7 @@ docker run -p <HOST_PORT>:<PORT_FROM_ENV> --env-file .env <Image_Name>
 
 #### Get Users
 
-```http
+```bash
   POST /api/v1/users/getUser?{QueryParams}
 ```
 #### Retrieves a list of users with optional pagination and sorting.
