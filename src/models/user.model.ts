@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IAddress, IUser, IPagination } from '../interfaces/interface';
+import { IAddress, IUser } from '../interfaces/interface';
 import jwt from 'jsonwebtoken'
 const addressSchema = new Schema<IAddress>({
   city: { type: String, required: true, trim:true },
@@ -57,15 +57,3 @@ userSchema.methods.generateRefreshToken = function () {
 
 export const User = mongoose.model<IUser>('User', userSchema);
 
-const paginationSchema = new Schema<IPagination>(
-  {
-    total: { type: Number, required: true },
-    limit: { type: Number, required: true },
-    page: { type: Number, required: true },
-    sortBy: { type: String, required: true },
-    items: [{ type: userSchema, required: true }],
-  },
-  { timestamps: true }
-);
-
-export const Pagination = mongoose.model<IPagination>('Pagination', paginationSchema);

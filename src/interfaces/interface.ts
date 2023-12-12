@@ -1,13 +1,11 @@
-import { Document } from 'mongoose';
-
-export interface IAddress extends Document {
+export interface IAddress {
   city: string;
   state: string;
   country: string;
   street: string;
 }
 
-export interface IUser extends Document {
+export interface IUser {
   id: string;
   gender: string;
   name: string;
@@ -15,15 +13,12 @@ export interface IUser extends Document {
   email: string;
   age: string;
   picture: string;
-  createdAt: Date;
-  generateAccessToken: () => string;
-  generateRefreshToken: () => string;
 }
 
-export interface IPagination extends Document {
+export interface IPagination {
   total: number;
   limit: number;
   page: number;
   sortBy: string;
-  items: IUser[];
+  items?: IUser[];
 }

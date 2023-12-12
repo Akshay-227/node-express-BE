@@ -4,6 +4,8 @@ import { User } from '../models/user.model';
 import multer from 'multer';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
+import { IPagination } from '../interfaces/interface';
+import { getUserData } from '../services/user.service';
 
 // Set up multer storage to keep files in memory
 const storage = multer.memoryStorage();
@@ -27,12 +29,11 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       throw new ApiError(400, 'All fields are required');
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    // Check if user with the same ID or email already exists
+    const existingUser = await User.findOne({ $or: [{ id }, { email }] });
     if (existingUser) {
-      throw new ApiError(409, 'User with email or username already exists');
+      throw new ApiError(409, 'User with the same ID or email already exists');
     }
-
     // Create user object - create entry in DB
     const newUser = new User({
       id,
@@ -54,7 +55,6 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       // Add other necessary fields as needed
     };
     console.log(responseData);
-    
 
     // Check for user creation
     res.status(200).json(new ApiResponse(200, responseData, 'User registered successfully'));
@@ -68,4 +68,29 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export default registerUser;
+const getUsers = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const pagination: IPagination = {
+      total: 0,
+      limit: parseInt(req.query.limit as string, 10) || 10,
+      page: parseInt(req.query.page as string, 10) || 1,
+      sortBy: req.query.sortBy as string || '_id',
+      items: [],
+    };
+
+    // Use the query parameter directly without parsing
+// Ensure that searchBy is a string
+    const searchBy = req.query.searchBy as string || '';
+    const users = await getUserData(pagination, searchBy);
+
+    pagination.total = users.total;
+    pagination.items = users.items;
+
+    res.json(new ApiResponse(200, pagination, 'User data retrieved successfully'));
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    res.status(500).json(new ApiResponse(500, null, 'Internal Server Error'));
+  }
+});
+
+export { registerUser, getUsers };
