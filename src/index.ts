@@ -12,9 +12,6 @@ connectDB()
   .then(() => {
     // Start the data fetching job
     startDataFetchingJob();
-    app.get('/', (req, res) => {
-      res.send('Hey this is my API running 🥳')
-    })
     // Start Express server
     app.listen(process.env.PORT || 8000, () => {
       console.log(`Server is running at port: ${process.env.PORT}`);
