@@ -1,15 +1,9 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
-import { User } from '../models/user.model';
-import multer from 'multer';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import { IPagination } from '../interfaces/interface';
-import { getUserData } from '../services/user.service';
-
-// Set up multer storage to keep files in memory
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+import { getUserData, registerNewUser } from '../services/user.service';
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   try {
@@ -29,13 +23,8 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       throw new ApiError(400, 'All fields are required');
     }
 
-    // Check if user with the same ID or email already exists
-    const existingUser = await User.findOne({ $or: [{ id }, { email }] });
-    if (existingUser) {
-      throw new ApiError(409, 'User with the same ID or email already exists');
-    }
-    // Create user object - create entry in DB
-    const newUser = new User({
+    // Create user object - register user through service
+    const registeredUser = await registerNewUser({
       id,
       gender,
       name,
@@ -44,14 +33,13 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
       age,
       picture,
     });
-    await newUser.save();
 
     // Remove unnecessary data for response (if needed)
     const responseData = {
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-      picture: newUser.picture,
+      id: registeredUser.id,
+      name: registeredUser.name,
+      email: registeredUser.email,
+      picture: registeredUser.picture,
       // Add other necessary fields as needed
     };
     console.log(responseData);
@@ -79,7 +67,7 @@ const getUsers = asyncHandler(async (req: Request, res: Response) => {
     };
 
     // Use the query parameter directly without parsing
-// Ensure that searchBy is a string
+    // Ensure that searchBy is a string
     const searchBy = req.query.searchBy as string || '';
     const users = await getUserData(pagination, searchBy);
 

@@ -7,7 +7,8 @@ config({
   path: './.env',
 });
 
-const BATCH_SIZE = parseInt(process.env.BATCH_SIZE!, 10); // Set your desired batch size
+const BATCH_SIZE = parseInt(process.env.BATCH_SIZE!, 10); // Set your desired batch size in env
+const TOTAL_RECORDS = parseInt(process.env.TOTAL_RECORDS!, 10); // Set your desired total records in env
 
 const fetchDataAndStoreBatch = async (batchId: number, data: any[]) => {
   try {
@@ -42,7 +43,10 @@ const fetchDataAndStoreBatch = async (batchId: number, data: any[]) => {
 const fetchAndStoreDataRecursively = async (startBatch: number) => {
   try {
     // Fetch data from the Random User Generator API
-    const response = await axios.get(process.env.API_URL!);
+    const response = await axios.get(process.env.API_URL!,{params: {
+      results: TOTAL_RECORDS,
+    },
+  });
 
     const randomUserData = response.data.results;
 

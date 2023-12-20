@@ -24,12 +24,18 @@ Make sure to create a `.env` file in the root of your project with the following
 ### 4. API_URL
 
 - **Description:** The URL for the external API used in your application.
-- **Example Value:** `https://randomuser.me/api/?results=10`
+- **Example Value:** `https://randomuser.me/api/`
 
 ### 5. BATCH_SIZE
 
-- **Description:** The configurable batch size for background tasks.
-- **Example Value:** `5`
+- **Description:** The configurable batch size for background tasks - it will divide records into batch size of 'BATCH_SIZE' and schedule the job using 'bullMQ' library.
+- **Example Value:** `50`
+
+### 5. TOTAL_RECORDS
+
+- **Description:** The configurable total records that needs to fetched from the random user generate API.
+- **Example Value:** `5000`
+- **Code will fetch 5000 records from API and run a queue job on batch size to enter records in DB.
 
 ## Getting Started
 
@@ -102,11 +108,5 @@ docker run -p <HOST_PORT>:<PORT_FROM_ENV> --env-file .env <Image_Name>
 http://localhost:8001/api/v1/users/getUsers?limit=10&page=1&sortBy=email&searchBy=john
 ```
 
-## Cron Job
-- APP also support a cron job which runs every - 2 hrs to fetch `random user data` from API which is included in `.env` file. Example - https://randomuser.me/api/?results=10, with BATCH_SIZE = 5
-
-- This cron is setup like when our makes DB connection 
-    - For the first time it fetched 10 randomuser data.
-    - Schedule CRON job to run every 2Hr
-
+## Note: 'Redis' must be installed and configured in the system on which you are running the Application. 
 

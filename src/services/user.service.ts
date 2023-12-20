@@ -1,29 +1,32 @@
 import { IPagination } from '../interfaces/interface';
-import { User } from '../models/user.model';
+import { getUsersWithPagination, createUser, findUserByIdOrEmail } from '../repositories/user.repository';
+import { ApiError } from '../utils/ApiError';
 
 const getUserData = async (pagination: IPagination, searchBy: string) => {
-  const { limit, page, sortBy } = pagination;
-  const skip = (page - 1) * limit;
-
-  const globalSearchFields = ['name', 'email', 'age', 'gender', 'dob', 'country'];
-
-  // Dynamic global search query
-  const globalSearchQuery = searchBy && {
-    $or: globalSearchFields.map((field) => ({
-      [field]: new RegExp(searchBy, 'i')
-    }))
-  };
-
-  const filter: any = globalSearchQuery || {};
-
-  const users = await User.find(filter)
-    .sort({ [sortBy]: 1 })
-    .skip(skip)
-    .limit(limit);
-
-  const total = await User.countDocuments(filter);
-
-  return { total, items: users };
+  return getUsersWithPagination(pagination, searchBy);
 };
 
-export { getUserData };
+const registerNewUser = async (userData: any) => {
+  const { id, email } = userData;
+
+  // Check if user with the same ID or email already exists
+  const existingUser = await findUserByIdOrEmail(id, email);
+
+  if (existingUser) {
+    throw new ApiError(409, 'User with the same ID or email already exists');
+  }
+
+  // Create user object - create entry in DB
+  const newUser = await createUser(userData);
+
+  // Return the registered user data
+  return {
+    id: newUser.id,
+    name: newUser.name,
+    email: newUser.email,
+    picture: newUser.picture,
+    // Add other necessary fields as needed
+  };
+};
+
+export { getUserData, registerNewUser };
